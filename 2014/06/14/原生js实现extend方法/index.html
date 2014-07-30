@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>原生js实现extend方法 | luckyrobin&#39;s blog</title>
+  <meta name="author" content="Robin Ren">
+  
+  <meta name="description" content="本来很想用原生js将我之前用Jquery写的pop插件重写一遍的，但因为用惯Jquery的缘故，导致对原生js的写法有些陌生了，也频频遇到阻断。
+正如这个extend方法，这个方法在写插件的时候几乎都会用到，意义在于用它来混合对象。jQuery extend文档也写的很清楚。在写之前有几点是要注意的">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="原生js实现extend方法"/>
+  <meta property="og:site_name" content="luckyrobin&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="luckyrobin&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">luckyrobin&#39;s blog</a></h1>
+  <h2><a href="/">someone like web</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/about">about</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-06-14T03:57:31.000Z"><a href="/2014/06/14/原生js实现extend方法/">6月 14 2014</a></time>
+      
+      
+  
+    <h1 class="title">原生js实现extend方法</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>本来很想用原生js将我之前用Jquery写的pop插件重写一遍的，但因为用惯Jquery的缘故，导致对原生js的写法有些陌生了，也频频遇到阻断。</p>
+<p>正如这个extend方法，这个方法在写插件的时候几乎都会用到，意义在于用它来混合对象。<a href="http://api.jquery.com/jQuery.extend/" target="_blank" rel="external">jQuery extend</a>文档也写的很清楚。在写之前有几点是要注意的：</p>
+<p><strong>jQuery.extend( [deep ], target, object1 [, objectN ] )</strong></p>
+<ul>
+<li>jQuery的extend分为深拷贝和浅拷贝，深拷贝就是如果某个属性是对象，那么也会同样会深入到该对象中去混合。反之，如果为浅拷贝就会直接覆盖该对象，无视对象内部的属性。控制方法在<em>deep</em>处设置成true就行了，然而我这里就不写浅拷贝了，默认就是深拷贝。</li>
+<li>混合顺序从右至左</li>
+</ul>
+<p><em>其实要写浅拷贝更简单，不需要递归和验证了。</em></p>
+<p>废话就不扯了，直接上代码</p>
+<figure class="highlight [javascript]"><figcaption><span>[extend实现]</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">extend</span><span class="params">()</span> </span>{</div><div class="line">    <span class="keyword">var</span> _extend = <span class="function"><span class="keyword">function</span> <span class="title">me</span><span class="params">(dest, source)</span> </span>{</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">var</span> name <span class="keyword">in</span> dest) {</div><div class="line">            <span class="keyword">if</span> (dest.hasOwnProperty(name)) {</div><div class="line">                <span class="comment">//当前属性是否为对象,如果为对象，则进行递归</span></div><div class="line">                <span class="keyword">if</span> ((dest[name] <span class="keyword">instanceof</span> <span class="built_in">Object</span>) && (source[name] <span class="keyword">instanceof</span> <span class="built_in">Object</span>)) {</div><div class="line">                    me(dest[name], source[name]);</div><div class="line">                }</div><div class="line">                <span class="comment">//检测该属性是否存在</span></div><div class="line">                <span class="keyword">if</span> (source.hasOwnProperty(name)) {</div><div class="line">                    <span class="keyword">continue</span>;</div><div class="line">                } <span class="keyword">else</span> {</div><div class="line">                    source[name] = dest[name];</div><div class="line">                }</div><div class="line">            }</div><div class="line">        }</div><div class="line">    }</div><div class="line">    <span class="keyword">var</span> _result = {},</div><div class="line">        arr = <span class="built_in">arguments</span>;</div><div class="line">    <span class="comment">//遍历属性，至后向前</span></div><div class="line">    <span class="keyword">if</span> (!arr.length) <span class="keyword">return</span> {};</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = arr.length - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) {</div><div class="line">        _extend(arr[i], _result);</div><div class="line">    }</div><div class="line">    arr[<span class="number">0</span>] = _result;</div><div class="line">    <span class="keyword">return</span> _result;</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>看吧，其实原理比较简单。就是不断遍历和递归对象，然后覆盖属性，最后return一个新对象，从而不破坏原有对象。</p>
+<p>当然，目前自己才疏学浅，这段代码肯定也还有着优化空间，如有高见也希望不吝赐教。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/前端/">前端</a>, <a href="/tags/javascript/">javascript</a>
+  </div>
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+<!-- 多说评论框 start -->
+  <div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="原生js实现extend方法" data-url="luckyrobin.github.io/2014/06/14/原生js实现extend方法/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"luckyrobin"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:luckyrobin.github.io">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2014/07/11/helloworld/">hello world</a>
+      </li>
+    
+      <li>
+        <a href="/2014/06/14/原生js实现extend方法/">原生js实现extend方法</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/javascript/">javascript</a><small>1</small></li>
+  
+    <li><a href="/tags/前端/">前端</a><small>1</small></li>
+  
+    <li><a href="/tags/生活/">生活</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 Robin Ren
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
