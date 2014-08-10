@@ -7,7 +7,8 @@
   <meta name="author" content="Robin Ren">
   
   <meta name="description" content="本来很想用原生js将我之前用Jquery写的pop插件重写一遍的，但因为用惯Jquery的缘故，导致对原生js的写法有些陌生了，也频频遇到阻断。
-正如这个extend方法，这个方法在写插件的时候几乎都会用到，意义在于用它来混合对象。jQuery extend文档也写的很清楚。在写之前有几点是要注意的">
+正如这个extend方法，这个方法在写插件的时候几乎都会用到，意义在于用它来混合对象。jQuery extend文档也写的很清楚。在写之前有几点是要注意的：
+jQuery.extend( [deep ], target, object1 [, objectN ] )">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -63,6 +64,8 @@
         <p>本来很想用原生js将我之前用Jquery写的pop插件重写一遍的，但因为用惯Jquery的缘故，导致对原生js的写法有些陌生了，也频频遇到阻断。</p>
 <p>正如这个extend方法，这个方法在写插件的时候几乎都会用到，意义在于用它来混合对象。<a href="http://api.jquery.com/jQuery.extend/" target="_blank" rel="external">jQuery extend</a>文档也写的很清楚。在写之前有几点是要注意的：</p>
 <p><strong>jQuery.extend( [deep ], target, object1 [, objectN ] )</strong></p>
+<a id="more"></a>
+
 <ul>
 <li>jQuery的extend分为深拷贝和浅拷贝，深拷贝就是如果某个属性是对象，那么也会同样会深入到该对象中去混合。反之，如果为浅拷贝就会直接覆盖该对象，无视对象内部的属性。控制方法在<em>deep</em>处设置成true就行了，然而我这里就不写浅拷贝了，默认就是深拷贝。</li>
 <li>混合顺序从右至左</li>
@@ -123,11 +126,15 @@ var duoshuoQuery = {short_name:"luckyrobin"};
   <ul class="entry">
     
       <li>
-        <a href="/2014/07/11/helloworld/">hello world</a>
+        <a href="/2014/08/10/javascript-的面向对象/">javascript 的面向对象</a>
       </li>
     
       <li>
         <a href="/2014/06/14/原生js实现extend方法/">原生js实现extend方法</a>
+      </li>
+    
+      <li>
+        <a href="/2014/06/11/helloworld/">hello world</a>
       </li>
     
   </ul>
@@ -139,9 +146,9 @@ var duoshuoQuery = {short_name:"luckyrobin"};
   <h3 class="title">标签</h3>
   <ul class="entry">
   
-    <li><a href="/tags/javascript/">javascript</a><small>1</small></li>
+    <li><a href="/tags/javascript/">javascript</a><small>2</small></li>
   
-    <li><a href="/tags/前端/">前端</a><small>1</small></li>
+    <li><a href="/tags/前端/">前端</a><small>2</small></li>
   
     <li><a href="/tags/生活/">生活</a><small>1</small></li>
   
