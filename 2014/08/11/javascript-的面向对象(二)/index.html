@@ -1,0 +1,189 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>javascript 的面向对象(二) | luckyrobin&#39;s blog</title>
+  <meta name="author" content="Robin Ren">
+  
+  <meta name="description" content="在上一个章节中，主要记录了目前我所理解的javascript的创建对象的各种方式，当然都有利弊，但比较常用的还是原型模式。
+作为一个OO语言，继承也是最重要的特性之一，它能够使一个类得到复用，并且可以在子类中扩展父类。许多OO语言都支持两种继承方式：接口继承和实际继承。接口继承只是继承方法的签名，而实际继承则是继承实际的方法。由于ECMAScript中的函数没有签名，所以它只支持实现继承，而其原理也就是依靠原型链来实现的。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="javascript 的面向对象(二)"/>
+  <meta property="og:site_name" content="luckyrobin&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="luckyrobin&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">luckyrobin&#39;s blog</a></h1>
+  <h2><a href="/">someone like web</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/about">about</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-08-11T13:54:38.000Z"><a href="/2014/08/11/javascript-的面向对象(二)/">8月 11 2014</a></time>
+      
+      
+  
+    <h1 class="title">javascript 的面向对象(二)</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>在上一个章节中，主要记录了目前我所理解的javascript的创建对象的各种方式，当然都有利弊，但比较常用的还是原型模式。</p>
+<p>作为一个OO语言，继承也是最重要的特性之一，它能够使一个类得到复用，并且可以在子类中扩展父类。许多OO语言都支持两种继承方式：接口继承和实际继承。接口继承只是继承方法的签名，而实际继承则是继承实际的方法。由于ECMAScript中的函数没有签名，所以它只支持实现继承，而其原理也就是依靠原型链来实现的。</p>
+<a id="more"></a>
+
+<h2 id="继承">继承</h2>
+<p>现在设想我有一个父类叫做Person</p>
+<figure class="highlight [javascript]"><figcaption><span>[Person]</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span><span class="params">(name)</span></span>{</div><div class="line">	<span class="keyword">this</span>.type = <span class="string">'human'</span>;</div><div class="line">	<span class="keyword">this</span>.name = name;</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>还有个将要继承Person的子类叫做Chinese</p>
+<figure class="highlight [javascript]"><figcaption><span>[Chinese]</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Chinese</span><span class="params">(contry,skinColor)</span></span>{</div><div class="line">	<span class="keyword">this</span>.contry = contry;</div><div class="line">	<span class="keyword">this</span>.skinColor = skinColor;</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>那么我们如何继承Person呢？</p>
+<h3 id="借用构造函数">借用构造函数</h3>
+<figure class="highlight [javascript]"><figcaption><span>[借用构造函数]</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span><span class="params">(name)</span></span>{</div><div class="line">	<span class="keyword">this</span>.type = <span class="string">'human'</span>;</div><div class="line">	<span class="keyword">this</span>.name = name;</div><div class="line">}</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Chinese</span><span class="params">(name,contry,skinColor)</span></span>{</div><div class="line">	Person.call(<span class="keyword">this</span>,name); <span class="comment">// 继承了Person</span></div><div class="line">	<span class="keyword">this</span>.contry = contry;</div><div class="line">	<span class="keyword">this</span>.skinColor = skinColor;</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">var</span> c1 = <span class="keyword">new</span> Chinese(<span class="string">'lucky'</span>,<span class="string">'China'</span>,<span class="string">'yellow'</span>);</div><div class="line"><span class="built_in">console</span>.log(c1.type); <span class="comment">// human</span></div><div class="line"><span class="built_in">console</span>.log(c1.name); <span class="comment">// lucky</span></div></pre></td></tr></table></figure>
+
+<p>其实这种方式就是在子类实例的环境下调用父类的构造函数。这样就会在Chinese对象上执行Peron中定义对象初始化代码。结果Chinese的每个实例就具有自己的副本了。并且可以在子类构造函数中向父类传递参数。<strong>需要注意的是：为了确保Person的构造函数不会重写Chinese的属性，一定要在调用父类的构造函数后，再添加子类私有的属性。</strong></p>
+<p>但是借用构造函数仍然是有问题的，上一篇文章也提到过，就是它仍然是构造函数——方法无法共享。</p>
+<h3 id="原型链的继承">原型链的继承</h3>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/前端/">前端</a>, <a href="/tags/javascript/">javascript</a>
+  </div>
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+<!-- 多说评论框 start -->
+  <div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="javascript 的面向对象(二)" data-url="luckyrobin.github.io/2014/08/11/javascript-的面向对象(二)/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"luckyrobin"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:luckyrobin.github.io">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2014/08/11/javascript-的面向对象(二)/">javascript 的面向对象(二)</a>
+      </li>
+    
+      <li>
+        <a href="/2014/08/10/javascript-的面向对象(一)/">javascript 的面向对象(一)</a>
+      </li>
+    
+      <li>
+        <a href="/2014/06/14/原生js实现extend方法/">原生js实现extend方法</a>
+      </li>
+    
+      <li>
+        <a href="/2014/06/11/helloworld/">hello world</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/javascript/">javascript</a><small>3</small></li>
+  
+    <li><a href="/tags/前端/">前端</a><small>3</small></li>
+  
+    <li><a href="/tags/生活/">生活</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 Robin Ren
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

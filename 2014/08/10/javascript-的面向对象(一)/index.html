@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>javascript 的面向对象 | luckyrobin&#39;s blog</title>
+  <title>javascript 的面向对象(一) | luckyrobin&#39;s blog</title>
   <meta name="author" content="Robin Ren">
   
   <meta name="description" content="关于javascript的面向对象，相较于其他传统OO语言，javascript的对象更为特殊也更难以理解。对于对象，我看过高程几遍，也看过不少博客资料，但在此之前我觉得自己仍然没有能够随心所欲的去理解javascript的对象与原型。哪怕现在也不一定全部理解了。
@@ -12,7 +12,7 @@ javascript的数据类型分为两种，基础类型和引用类型，而基础�
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="javascript 的面向对象"/>
+  <meta property="og:title" content="javascript 的面向对象(一)"/>
   <meta property="og:site_name" content="luckyrobin&#39;s blog"/>
 
   
@@ -50,11 +50,11 @@ javascript的数据类型分为两种，基础类型和引用类型，而基础�
     <header>
       
         <div class="icon"></div>
-        <time datetime="2014-08-10T12:56:35.000Z"><a href="/2014/08/10/javascript-的面向对象/">8月 10 2014</a></time>
+        <time datetime="2014-08-10T12:56:35.000Z"><a href="/2014/08/10/javascript-的面向对象(一)/">8月 10 2014</a></time>
       
       
   
-    <h1 class="title">javascript 的面向对象</h1>
+    <h1 class="title">javascript 的面向对象(一)</h1>
   
 
     </header>
@@ -64,51 +64,50 @@ javascript的数据类型分为两种，基础类型和引用类型，而基础�
 <p>javascript的数据类型分为两种，基础类型和引用类型，而基础类型分为Bollean、Number以及String，而引用类型只有Object一种。是的，javascript有类的概念，但是它与其他OO语言不同的是，javascript中的类又不是一个独立的数据结构。</p>
 <a id="more"></a>
 
-<h1 id="创建对象">创建对象</h1>
-<ol>
-<li>封装<br>如果我们要将javascript的基础类型封装成一个对象要怎么做呢？</li>
-</ol>
+<h2 id="创建对象">创建对象</h2>
+<h3 id="封装">封装</h3>
+<p>如果我们要将javascript的基础类型封装成一个对象要怎么做呢？</p>
 <figure class="highlight [javascript]"><figcaption><span>[Person对象]</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> Person = {</div><div class="line">	name: <span class="string">''</span>，</div><div class="line">	age: <span class="number">22</span>,</div><div class="line">	sayName:<span class="function"><span class="keyword">function</span><span class="params">()</span></span>{</div><div class="line"> 		<span class="keyword">return</span> <span class="keyword">this</span>.name;</div><div class="line">	}</div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>这就是一个最简单的对象的封装方式。<br>然而，在EC5中，定义对象可以使用另一种方式，而这种方式更接近与OO语言，不仅有了一些get和set等默认特性，而且语法上也更为明确。</p>
 <figure class="highlight [javascript]"><figcaption><span>[EC5的对象封装方式]</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> Person = {};</div><div class="line">Object.defineProperties(Person, {</div><div class="line">	name: {</div><div class="line">		value: <span class="string">''</span>,</div><div class="line">		writable:<span class="literal">true</span> <span class="comment">//这里浏览器默认是false</span></div><div class="line">	},</div><div class="line">	age: {</div><div class="line">		value: <span class="number">22</span>,</div><div class="line">		writable:<span class="literal">true</span></div><div class="line">	},</div><div class="line">	sayName:<span class="function"><span class="keyword">function</span><span class="type">: {</span></span></div><div class="line">		get<span class="type">: function</span><span class="params">()</span> {</div><div class="line">			<span class="keyword">return</span> <span class="keyword">this</span>.name;</div><div class="line">		},</div><div class="line">		<span class="keyword">set</span>: <span class="function"><span class="keyword">function</span><span class="params">(newValue)</span> </span>{</div><div class="line">		}</div><div class="line">	}</div><div class="line">});</div></pre></td></tr></table></figure>
 
-<p>但是，这个仅仅只是一个对象，并不是类，因为在只有类才可以实例化成对象，在javascript里类就是一个函数，如果使用new操作符就可以实例化成一个对象，如果只是调用，那么它就是一个普通的执行函数。虽然Object构造函数或者对象字面量可以用来创建单个对象。但是这个方式有个明显的缺点：使用同一个接口创建很多对象，会产生大量的重复代码。<br>我这里先提前预支一下下面将要说明的内容，伟大的javascript大神—Douglas Crockford给出了一个方法可以将对象转换成类的方法。</p>
+<p>但是，这个仅仅只是一个对象，并不是类，因为在只有类才可以实例化成对象，在javascript里类就是一个函数，如果使用new操作符就可以实例化成一个对象，如果只是调用，那么它就是一个普通的执行函数。虽然Object构造函数或者对象字面量可以用来创建单个对象。但是这个方式有个明显的缺点：使用同一个接口创建很多对象，会产生大量的重复代码。<br>我这里先提前预支一下下面将要说明的内容，伟大的javascript大神——Douglas Crockford给出了一个方法可以将对象转换成类的方法。</p>
 <figure class="highlight [javascript]"><figcaption><span>[对象包装]</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">object</span><span class="params">(o)</span></span>{</div><div class="line">	<span class="keyword">var</span> F = <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>{};</div><div class="line">	F.prototype = o ;</div><div class="line">	<span class="keyword">return</span> <span class="keyword">new</span> F;</div><div class="line">}</div><div class="line"><span class="keyword">var</span> person1 = object(Person);</div></pre></td></tr></table></figure>
 
-<ol>
-<li>工厂模式</li>
-</ol>
+<h3 id="工厂模式">工厂模式</h3>
 <figure class="highlight [javascript]"><figcaption><span>[工厂模式]</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">createPerson</span><span class="params">(name,age)</span></span>{</div><div class="line">	<span class="keyword">var</span> o = <span class="keyword">new</span> <span class="built_in">Object</span>();</div><div class="line">	o.name = name;</div><div class="line">	o.age = age;</div><div class="line">	o.sayName = <span class="function"><span class="keyword">function</span><span class="params">()</span></span>{</div><div class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.name;</div><div class="line">	}</div><div class="line">	<span class="keyword">return</span> o;</div><div class="line">}</div><div class="line"><span class="keyword">var</span> person1 = createPerson(<span class="string">'lucky'</span>,<span class="number">22</span>);</div><div class="line"><span class="keyword">var</span> person2 = createPerson(<span class="string">'robin'</span>,<span class="number">24</span>);</div></pre></td></tr></table></figure>
 
-<p>工厂模式就是像工厂的方式—用一个特定的模具，然后不断的按照这个模具重复产出。而这个createPerson 方法就是这样一个模具。<br>这种工厂模式其实就是普通的执行函数，然后定义一个空对象，加入属性和方法后返回出来而已。这个方式却是解决了需要创建很多对象的问题，但是用工厂模式创建的类似乎都没有关联性，不能反映出它们是同一个原型对象的实例。</p>
-<p>3.构造函数模式</p>
+<p>工厂模式就是像工厂的方式—用一个特定的模具，然后不断的按照这个模具重复产出。而这个createPerson方法就是这样一个模具。<br>这种工厂模式其实就是普通的执行函数，然后定义一个空对象，加入属性和方法后返回出来而已。这个方式却是解决了需要创建很多对象的问题，但是用工厂模式创建的类似乎都没有关联性，不能反映出它们是同一个原型对象的实例。</p>
+<h3 id="构造函数模式">构造函数模式</h3>
 <figure class="highlight [javascript]"><figcaption><span>[工厂模式]</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span><span class="params">(name,age)</span></span>{</div><div class="line">	<span class="keyword">this</span>.name = name;</div><div class="line">	<span class="keyword">this</span>.age = age;</div><div class="line">	<span class="keyword">this</span>.sayName = <span class="function"><span class="keyword">function</span><span class="params">()</span></span>{</div><div class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.name;</div><div class="line">	}</div><div class="line">}</div><div class="line"><span class="keyword">var</span> person1 = <span class="keyword">new</span> Person(<span class="string">'lucky'</span>,<span class="number">22</span>);</div><div class="line"><span class="keyword">var</span> person2 = <span class="keyword">new</span> Person(<span class="string">'robin'</span>,<span class="number">24</span>);</div><div class="line">person1.constructor === Person <span class="comment">//true;</span></div><div class="line">person1 <span class="keyword">instanceof</span> Person <span class="comment">//true;</span></div></pre></td></tr></table></figure>
 
 <p>所谓”构造函数”，其实就是一个普通函数，但是内部使用了this变量。对构造函数使用new运算符，就能生成实例，并且this变量会绑定在实例对象上。<br>在这个例子当中，person1和person2中都保存一个指向Person的constructor属性。</p>
-<p>4.构造函数的问题<br>构造函数着实能够满足人们的需求，实例化出来的对象又能够验证出是同源的。但是构造函数最大的问题是，实例化出来的方法同样会重新创建（如下个例子可以清晰的表明）。其实这个方法是没有必要的，因为每个对象中的this不同，所以方法自然会做出不同的操作，所以方法用来共享是完全可以的，每次实例化创建出重复的方法会造成大量的内存消耗。</p>
+<h3 id="构造函数的问题">构造函数的问题</h3>
+<p>构造函数着实能够满足人们的需求，实例化出来的对象又能够验证出是同源的。但是构造函数最大的问题是，实例化出来的方法同样会重新创建（如下个例子可以清晰的表明）。其实这个方法是没有必要的，因为每个对象中的this不同，所以方法自然会做出不同的操作，所以方法用来共享是完全可以的，每次实例化创建出重复的方法会造成大量的内存消耗。</p>
 <figure class="highlight [javascript]"><figcaption><span>[构造函数的问题]</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span><span class="params">(name,age)</span></span>{</div><div class="line">	<span class="keyword">this</span>.name = name;</div><div class="line">	<span class="keyword">this</span>.age = age;</div><div class="line">	<span class="keyword">this</span>.sayName = <span class="keyword">new</span> <span class="built_in">Function</span>(“<span class="keyword">return</span> <span class="keyword">this</span>.name”);</div><div class="line">}</div><div class="line">person1.sayName === person2.sayName <span class="comment">// false</span></div></pre></td></tr></table></figure>
 
-<p>5.原型模式<br>每个函数都会有个prototype属性，这个属性是一个指针，它指向一个对象。而这个对象的用途就是在这个对象中声明的属性和方法在其所有的实例中都是共享的。我们称之为—原型对象。</p>
+<h3 id="原型模式">原型模式</h3>
+<p>每个函数都会有个prototype属性，这个属性是一个指针，它指向一个对象。而这个对象的用途就是在这个对象中声明的属性和方法在其所有的实例中都是共享的。我们称之为——原型对象。</p>
 <figure class="highlight [javascript]"><figcaption><span>[原型模式]</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span><span class="params">(name,age)</span></span>{</div><div class="line">	<span class="keyword">this</span>.name = name;</div><div class="line">	<span class="keyword">this</span>.age = age;</div><div class="line">}</div><div class="line">Person.prototype.type = <span class="string">'human'</span>;</div><div class="line">Person.prototype.sayName = <span class="function"><span class="keyword">function</span><span class="params">()</span></span>{</div><div class="line">	<span class="keyword">return</span> <span class="keyword">this</span>.name;</div><div class="line">}</div><div class="line"></div><div class="line">person1.sayName === person2.sayName <span class="comment">// true</span></div><div class="line">Person.prototype.constructor === Person <span class="comment">// true</span></div><div class="line">person1.__proto__ === Person.prototype <span class="comment">// true</span></div></pre></td></tr></table></figure>
 
-<p>所谓原型，就是javascript中函数的一个属性，它指向原型对象，而同时原型对象也会有一个constructor属性指回这个函数。在我们实例化一个对象的时候，这个对象内部会有一个<strong>proto</strong>内部属性，指向函数的原型对象。</p>
+<p>所谓原型，就是javascript中函数的一个属性，它指向原型对象，而同时原型对象也会有一个constructor属性指回这个函数。在我们实例化一个对象的时候，这个对象内部会有一个__proto__内部属性，指向函数的原型对象。</p>
 <p>其中有几种方式可以验证某个实例与原型之间的关系：</p>
 <ul>
-<li><p>isPrototypeOf()<br>这个方法用来判断，某个protoype对象和某个实例之间的关系。<br>Person.prototype.isPrototypeOf(person1) // true</p>
+<li><p>isPrototypeOf()<br>这个方法用来判断，某个protoype对象和某个实例之间的关系。<br><code>Person.prototype.isPrototypeOf(person1) // true</code></p>
 </li>
-<li><p>Object.getPrototypeOf()<br>这个方法是EC5的新方法，它能够返回<strong>proto</strong>的值。<br>Object.getPrototypeOf(person1) === Person.prototype  // true</p>
+<li><p>Object.getPrototypeOf()<br>这个方法是EC5的新方法，它能够返回 __proto__ 的值。<br><code>Object.getPrototypeOf(person1) === Person.prototype  // true</code></p>
 </li>
-<li><p>hasOwnProperty()<br>这个方法能够判断一个属性是否存在与本地对象中<br>person1.hasOwnProperty(‘type’)  // false<br>person1.type == ‘animal’;<br>person1.hasOwnProperty(‘type’)  // true</p>
+<li><p>hasOwnProperty()<br>这个方法能够判断一个属性是否存在与本地对象中<br><code>person1.hasOwnProperty(&#39;type&#39;)  // false</code><br><code>person1.type == &#39;animal&#39;;</code><br><code>person1.hasOwnProperty(&#39;type&#39;)  // true</code></p>
 </li>
-<li><p>in操作符<br>in运算符可以用来判断，某个实例是否含有某个属性，不管是不是本地属性。<br>‘name’ in Person1  // true<br>‘type’ in Person1  // true</p>
+<li><p>in操作符<br>in运算符可以用来判断，某个实例是否含有某个属性，不管是不是本地属性。<br><code>&#39;name&#39; in Person1  // true</code><br><code>&#39;type&#39; in Person1  // true</code></p>
 </li>
-<li><p>Object.keys()<br>这个方法接收一个对象作为参数，返回一个包含所有可枚举属性的数组<br>Object.keys(Person.prototype); // [“type”, “sa yName”]<br>Object.keys(person1); // [“name”, “age”]</p>
+<li><p>Object.keys()<br>这个方法接收一个对象作为参数，返回一个包含所有可枚举属性的数组<br><code>Object.keys(Person.prototype); // [&quot;type&quot;, &quot;sa yName&quot;]</code><br><code>Object.keys(person1); // [&quot;name&quot;, &quot;age&quot;]</code></p>
 </li>
-<li><p>Object.getOwnPropertyNames()<br>这个方法也是接收一个对象作为参数，但是它返回所有属性，无论是否可枚举<br>Object.getOwnPropertyNames(Person.prototype) //  [“constructor”, “type”, “sayName”]<br>Object.getOwnPropertyNames(person1) // [“name”, “age”]</p>
+<li><p>Object.getOwnPropertyNames()<br>这个方法也是接收一个对象作为参数，但是它返回所有属性，无论是否可枚举<br><code>Object.getOwnPropertyNames(Person.prototype) //  [&quot;constructor&quot;, &quot;type&quot;, &quot;sayName&quot;]</code><br><code>Object.getOwnPropertyNames(person1) // [&quot;name&quot;, &quot;age&quot;]</code></p>
 </li>
 </ul>
-<p>还有一点需要注意的是：虽然可以用对象字面量的方式创建原型对象，但是这样会重写原型对象。</p>
+<p><strong>还有一点需要注意的是：虽然可以用对象字面量的方式创建原型对象，但是这样会重写原型对象。</strong></p>
 <figure class="highlight [javascript]"><figcaption><span>[重写原型对象]</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">Person.prototype = {</div><div class="line">	<span class="built_in">type</span> : <span class="string">'human'</span>,</div><div class="line">	sayName : <span class="function"><span class="keyword">function</span><span class="params">()</span></span>{</div><div class="line">		<span class="keyword">return</span> this.name;</div><div class="line">	}</div><div class="line">}</div><div class="line">Person.prototype // Object {<span class="built_in">type</span>: <span class="string">"human"</span>} 而不是 Person {<span class="built_in">type</span>: <span class="string">"human"</span>}</div></pre></td></tr></table></figure>
 
 <p>因为原型对象默认会有一个指回Person的constructor。但是如果用字面量的方式就相当于新建了另一个对象，这样就切断了构造函数与原型之间的联系。所以定义原型对象最好不要为了方便而使用这种方式。</p>
@@ -130,7 +129,7 @@ javascript的数据类型分为两种，基础类型和引用类型，而基础�
   </div>
 </article>
 <!-- 多说评论框 start -->
-  <div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="javascript 的面向对象" data-url="luckyrobin.github.io/2014/08/10/javascript-的面向对象/"></div>
+  <div class="ds-thread" data-thread-key="请将此处替换成文章在你的站点中的ID" data-title="javascript 的面向对象(一)" data-url="luckyrobin.github.io/2014/08/10/javascript-的面向对象(一)/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
@@ -162,7 +161,11 @@ var duoshuoQuery = {short_name:"luckyrobin"};
   <ul class="entry">
     
       <li>
-        <a href="/2014/08/10/javascript-的面向对象/">javascript 的面向对象</a>
+        <a href="/2014/08/11/javascript-的面向对象(二)/">javascript 的面向对象(二)</a>
+      </li>
+    
+      <li>
+        <a href="/2014/08/10/javascript-的面向对象(一)/">javascript 的面向对象(一)</a>
       </li>
     
       <li>
@@ -182,9 +185,9 @@ var duoshuoQuery = {short_name:"luckyrobin"};
   <h3 class="title">标签</h3>
   <ul class="entry">
   
-    <li><a href="/tags/javascript/">javascript</a><small>2</small></li>
+    <li><a href="/tags/javascript/">javascript</a><small>3</small></li>
   
-    <li><a href="/tags/前端/">前端</a><small>2</small></li>
+    <li><a href="/tags/前端/">前端</a><small>3</small></li>
   
     <li><a href="/tags/生活/">生活</a><small>1</small></li>
   
